@@ -1,6 +1,9 @@
 .test {
+    display: flex;
     width: 100px;
     height: 100px;
     background-color: red;
-
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
 }

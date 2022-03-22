@@ -2,6 +2,7 @@ import { Noth, NothConfig } from './noth';
 import { NuthProxy, Watcher } from './proxy';
 import { Template, TemplateOrigin } from './type'
 
+/** 负责构建DOM的类 */
 export class Builder {
     template: Template;
     noth: Noth;
@@ -19,21 +20,37 @@ export class Builder {
     treeBuild(): HTMLElement {
 
         const tp = this.template;
-        return buildForNoth(tp, this.noth);
+        return this.buildForNoth(tp, this.noth);
     }
+
+    /** 递归解析函数 */
+    public buildForNoth: (tpl: Template, noth: Noth) => HTMLElement = buildForNoth;
+    /** 元素解析函数uu */
+    public ElementParser: () => void = ElementParser;
+    /** 文本解析函数 */
+    public TextParser: (text: string, noth: Noth) => Text[] = TextParser;
+    /** 事件解析函数 */
+    public EventParser: () => void = EventParser;
+    /** style解析函数 */
+    /** class解析函数 */
 }
 
 
 /**
  * 如果传入的是Noth对象，则先提取内部的template模板
 */
-function buildForNoth(tpl: Template, noth: Noth): HTMLElement {
+function buildForNoth(template: Template, noth: Noth): HTMLElement {
+    /** 先将当前模板对象的noth设为主noth */
+    // let noth = this.noth;
+
     /** 类型判断 */
     let tp: TemplateOrigin;
-    if (tpl instanceof Noth) {
-        tp = tpl.config.template
+    if (template instanceof Noth) {
+        // noth = template // 如果当前模板就是一个noth对象
+        // tp = template.config.template
+        return buildForNoth(template.config.template, template)
     } else {
-        tp = tpl
+        tp = template
     }
 
     /** 创建元素节点 */
@@ -82,12 +99,21 @@ function buildForNoth(tpl: Template, noth: Noth): HTMLElement {
                     ele.appendChild(textNode)
                 })
             } else {
+
+
                 ele.appendChild(buildForNoth(tp, noth) as HTMLElement);
+
+
             }
 
         });
     }
     return ele;
+}
+
+/** 元素解析模块 */
+function ElementParser() {
+
 }
 
 /** text文本解析模块 */
@@ -110,5 +136,10 @@ function TextParser(text: string, noth: Noth): Text[] {
 
         return textNode;
     })
+}
+
+/** 事件解析模块 */
+function EventParser() {
+
 }
 
